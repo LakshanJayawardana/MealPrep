@@ -1,0 +1,53 @@
+{
+  "App": {
+    "brand": "MealPrep",
+    "navDashboard": "Dashboard",
+    "navMeals": "Meals",
+    "navPlans": "Plans",
+    "logOut": "Log out"
+  },
+  "Login": {
+    "title": "Log in",
+    "email": "Email",
+    "password": "Password",
+    "submit": "Log in",
+    "submitting": "Logging in...",
+    "noAccount": "No account?",
+    "signUpLink": "Sign up"
+  },
+  "Signup": {
+    "title": "Sign up",
+    "email": "Email",
+    "password": "Password",
+    "submit": "Sign up",
+    "submitting": "Creating account...",
+    "haveAccount": "Have an account?",
+    "logInLink": "Log in",
+    "checkEmail": "Check your email to confirm your account."
+  },
+  "Dashboard": {
+    "welcome": "Welcome back",
+    "signedInAs": "Signed in as",
+    "mealsAvailable": "Meals available",
+    "plansCreated": "Plans created",
+    "browseMeals": "Browse meals",
+    "browseMealsDesc": "See the catalog and your custom meals",
+    "generatePlan": "Generate a plan",
+    "generatePlanDesc": "Create a 7-day menu with variety"
+  },
+  "Meals": {
+    "title": "Meals",
+    "newMeal": "+ New meal",
+    "filterAll": "All",
+    "filterCatalog": "Catalog",
+    "filterMine": "Mine",
+    "empty": "No meals in this view.",
+    "addFirst": "Add your first meal",
+    "availableCount": "{count, plural, =0 {No meals} one {# meal} other {# meals}} available"
+  },
+  "Language": {
+    "switchTo": "Switch language",
+    "english": "English",
+    "sinhala": "සිංහල"
+  }
+}

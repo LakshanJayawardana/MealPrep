@@ -1,0 +1,53 @@
+{
+  "App": {
+    "brand": "MealPrep",
+    "navDashboard": "පුවරුව",
+    "navMeals": "ආහාර",
+    "navPlans": "සැලසුම්",
+    "logOut": "ඉවත් වන්න"
+  },
+  "Login": {
+    "title": "පිවිසෙන්න",
+    "email": "ඊමේල්",
+    "password": "මුරපදය",
+    "submit": "පිවිසෙන්න",
+    "submitting": "පිවිසෙමින්...",
+    "noAccount": "ගිණුමක් නැද්ද?",
+    "signUpLink": "ලියාපදිංචි වන්න"
+  },
+  "Signup": {
+    "title": "ලියාපදිංචි වන්න",
+    "email": "ඊමේල්",
+    "password": "මුරපදය",
+    "submit": "ලියාපදිංචි වන්න",
+    "submitting": "ගිණුම සාදමින්...",
+    "haveAccount": "දැනටමත් ගිණුමක් තිබේද?",
+    "logInLink": "පිවිසෙන්න",
+    "checkEmail": "ඔබේ ගිණුම තහවුරු කිරීමට ඊමේල් පරීක්ෂා කරන්න."
+  },
+  "Dashboard": {
+    "welcome": "නැවත සාදරයෙන් පිළිගනිමු",
+    "signedInAs": "පිවිසී ඇත්තේ",
+    "mealsAvailable": "පවතින ආහාර",
+    "plansCreated": "සාදන ලද සැලසුම්",
+    "browseMeals": "ආහාර බලන්න",
+    "browseMealsDesc": "නාමාවලිය සහ ඔබේ අභිරුචි ආහාර බලන්න",
+    "generatePlan": "සැලසුමක් සාදන්න",
+    "generatePlanDesc": "විවිධත්වය සහිත දින 7ක මෙනුවක් සාදන්න"
+  },
+  "Meals": {
+    "title": "ආහාර",
+    "newMeal": "+ නව ආහාරයක්",
+    "filterAll": "සියල්ල",
+    "filterCatalog": "නාමාවලිය",
+    "filterMine": "මගේ",
+    "empty": "මෙම දර්ශනයේ ආහාර නොමැත.",
+    "addFirst": "ඔබේ පළමු ආහාරය එක් කරන්න",
+    "availableCount": "{count, plural, =0 {ආහාර නොමැත} one {ආහාර #ක්} other {ආහාර #ක්}} පවතී"
+  },
+  "Language": {
+    "switchTo": "භාෂාව මාරු කරන්න",
+    "english": "English",
+    "sinhala": "සිංහල"
+  }
+}

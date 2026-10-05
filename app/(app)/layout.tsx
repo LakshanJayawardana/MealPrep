@@ -16,6 +16,13 @@ export default async function AppLayout({
 
   if (!user) redirect('/login')
 
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('is_admin')
+    .eq('id', user.id)
+    .single()
+
+  const isAdmin = profile?.is_admin ?? false
   const t = await getTranslations('App')
 
   return (
@@ -51,6 +58,14 @@ export default async function AppLayout({
             >
               {t('navPlans')}
             </Link>
+            {isAdmin && (
+              <Link
+                href="/admin"
+                className="font-medium text-accent-700 transition-colors hover:text-accent-900"
+              >
+                Admin
+              </Link>
+            )}
           </nav>
 
           <div className="flex items-center gap-3">
@@ -74,10 +89,13 @@ export default async function AppLayout({
       </main>
 
       <nav className="fixed bottom-0 left-0 right-0 z-20 border-t border-stone-200 bg-white/95 backdrop-blur pb-safe md:hidden">
-        <div className="grid grid-cols-3">
+        <div className={`grid ${isAdmin ? 'grid-cols-4' : 'grid-cols-3'}`}>
           <BottomNavLink href="/dashboard" label={t('navDashboard')} icon="🏠" />
           <BottomNavLink href="/meals" label={t('navMeals')} icon="🍽" />
           <BottomNavLink href="/plans" label={t('navPlans')} icon="📅" />
+          {isAdmin && (
+            <BottomNavLink href="/admin" label="Admin" icon="⚙️" />
+          )}
         </div>
       </nav>
     </div>

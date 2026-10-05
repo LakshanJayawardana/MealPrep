@@ -17,7 +17,7 @@ export default async function MealsPage({
 
   let query = supabase
     .from('meals')
-    .select('id, name, cuisine, meal_type, tags, user_id, meal_ingredients(count)')
+    .select('id, name, role, cuisine, meal_type, tags, user_id, meal_ingredients(count)')
     .order('name')
 
   if (filter === 'system') {
@@ -83,14 +83,15 @@ export default async function MealsPage({
             <MealCard
               key={m.id}
               meal={{
-                id: m.id,
-                name: m.name,
-                cuisine: m.cuisine,
-                meal_type: m.meal_type,
-                tags: m.tags,
-                user_id: m.user_id,
-                ingredient_count: m.meal_ingredients?.[0]?.count ?? 0,
-              }}
+  id: m.id,
+  name: m.name,
+  role: m.role,
+  cuisine: m.cuisine,
+  meal_type: m.meal_type,
+  tags: m.tags,
+  user_id: m.user_id,
+  ingredient_count: m.meal_ingredients?.[0]?.count ?? 0,
+}}
             />
           ))}
         </div>

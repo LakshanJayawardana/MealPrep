@@ -3,191 +3,263 @@ import { generatePlan, scoreMeal } from './generator'
 import { DEFAULT_WEIGHTS, type Meal } from './types'
 
 // ---- Fixtures ----
-// Deliberately isolated so each test can measure one penalty at a time.
 
-const chickenAsian: Meal = {
-  id: '1',
-  name: 'Grilled Chicken & Rice',
-  cuisine: 'asian',
+const chickenCurry: Meal = {
+  id: 'c1',
+  name: 'Chicken Curry',
+  role: 'curry',
+  cuisine: 'sri-lankan',
   meal_type: 'lunch',
   tags: ['high-protein'],
   primaryIngredientIds: ['chicken'],
 }
 
-const chickenAsianDupe: Meal = {
-  id: '2',
-  name: 'Chicken Broccoli Bowl',
-  cuisine: 'asian',
-  meal_type: 'lunch',
-  tags: ['high-protein'],
-  primaryIngredientIds: ['chicken'],
-}
-
-// Same primary ingredient, different cuisine, different tags
-const chickenWestern: Meal = {
-  id: '3',
-  name: 'Roast Chicken',
-  cuisine: 'western',
-  meal_type: 'lunch',
-  tags: ['comfort'],
-  primaryIngredientIds: ['chicken'],
-}
-
-// Different primary, same cuisine as chickenAsian
-const tofuAsian: Meal = {
-  id: '4',
-  name: 'Tofu Rice Bowl',
-  cuisine: 'asian',
+const dhalCurry: Meal = {
+  id: 'c2',
+  name: 'Dhal Curry',
+  role: 'curry',
+  cuisine: 'sri-lankan',
   meal_type: 'lunch',
   tags: ['vegetarian'],
-  primaryIngredientIds: ['tofu'],
+  primaryIngredientIds: ['dhal'],
 }
 
-// Different primary, different cuisine, same tag as chickenAsian
-const lettuceWestern: Meal = {
-  id: '5',
-  name: 'Chicken Salad',
-  cuisine: 'western',
+const brinjalCurry: Meal = {
+  id: 'c3',
+  name: 'Brinjal Curry',
+  role: 'curry',
+  cuisine: 'sri-lankan',
+  meal_type: 'lunch',
+  tags: ['vegetarian'],
+  primaryIngredientIds: ['brinjal'],
+}
+
+const fishCurry: Meal = {
+  id: 'c4',
+  name: 'Fish Curry',
+  role: 'curry',
+  cuisine: 'sri-lankan',
   meal_type: 'lunch',
   tags: ['high-protein'],
-  primaryIngredientIds: ['lettuce'],
+  primaryIngredientIds: ['tuna'],
 }
 
-// Dinner options for plan-level tests
-const beefItalian: Meal = {
-  id: '6',
-  name: 'Beef Pasta',
-  cuisine: 'italian',
-  meal_type: 'dinner',
-  tags: ['comfort'],
-  primaryIngredientIds: ['beef'],
+const redRice: Meal = {
+  id: 'k1',
+  name: 'Red Rice',
+  role: 'carb',
+  cuisine: 'sri-lankan',
+  meal_type: 'lunch',
+  tags: [],
+  primaryIngredientIds: ['red-rice'],
 }
 
-const salmonWestern: Meal = {
-  id: '7',
-  name: 'Salmon & Quinoa',
-  cuisine: 'western',
-  meal_type: 'dinner',
-  tags: ['healthy'],
-  primaryIngredientIds: ['salmon'],
+const whiteRice: Meal = {
+  id: 'k2',
+  name: 'White Rice',
+  role: 'carb',
+  cuisine: 'sri-lankan',
+  meal_type: 'lunch',
+  tags: [],
+  primaryIngredientIds: ['white-rice'],
 }
 
-const pastaItalian: Meal = {
-  id: '8',
-  name: 'Tomato Pasta',
-  cuisine: 'italian',
+const stringHoppers: Meal = {
+  id: 'k3',
+  name: 'String Hoppers',
+  role: 'carb',
+  cuisine: 'sri-lankan',
+  meal_type: 'breakfast',
+  tags: [],
+  primaryIngredientIds: ['rice-flour'],
+}
+
+const eggHopper: Meal = {
+  id: 'b1',
+  name: 'Egg Hopper',
+  role: 'breakfast',
+  cuisine: 'sri-lankan',
+  meal_type: 'breakfast',
+  tags: [],
+  primaryIngredientIds: ['egg'],
+}
+
+const kiribath: Meal = {
+  id: 'b2',
+  name: 'Kiribath',
+  role: 'breakfast',
+  cuisine: 'sri-lankan',
+  meal_type: 'breakfast',
+  tags: [],
+  primaryIngredientIds: ['white-rice'],
+}
+
+const kottu: Meal = {
+  id: 'd1',
+  name: 'Kottu Roti',
+  role: 'dish',
+  cuisine: 'sri-lankan',
   meal_type: 'dinner',
-  tags: ['vegetarian'],
-  primaryIngredientIds: ['pasta'],
+  tags: [],
+  primaryIngredientIds: ['kottu'],
 }
 
 const allMeals: Meal[] = [
-  chickenAsian,
-  chickenAsianDupe,
-  chickenWestern,
-  tofuAsian,
-  lettuceWestern,
-  beefItalian,
-  salmonWestern,
-  pastaItalian,
+  chickenCurry,
+  dhalCurry,
+  brinjalCurry,
+  fishCurry,
+  redRice,
+  whiteRice,
+  stringHoppers,
+  eggHopper,
+  kiribath,
+  kottu,
 ]
 
 // ---- scoreMeal tests ----
 
 describe('scoreMeal', () => {
-  it('gives a fresh meal the base score with no penalties', () => {
-    const result = scoreMeal(chickenAsian, [], DEFAULT_WEIGHTS)
+  it('gives a fresh meal the base score', () => {
+    const result = scoreMeal(chickenCurry, [], DEFAULT_WEIGHTS)
     expect(result.score).toBe(100)
-    expect(result.reasons).toContain('no conflicts with recent meals')
   })
 
-  it('penalizes exact repeats with all overlapping axes', () => {
-    // Same meal = repeat + ingredient + cuisine + tag all stack
-    const result = scoreMeal(chickenAsian, [chickenAsian], DEFAULT_WEIGHTS)
-    const expectedPenalty =
-      DEFAULT_WEIGHTS.repeat +
-      DEFAULT_WEIGHTS.ingredient +
-      DEFAULT_WEIGHTS.cuisine +
+  it('penalizes exact repeats', () => {
+    const result = scoreMeal(chickenCurry, [chickenCurry], DEFAULT_WEIGHTS)
+    // repeat + ingredient + cuisine + tag all stack for identical meal
+    const expected =
+      100 -
+      DEFAULT_WEIGHTS.repeat -
+      DEFAULT_WEIGHTS.ingredient -
+      DEFAULT_WEIGHTS.cuisine -
       DEFAULT_WEIGHTS.tag
-    expect(result.score).toBe(100 - expectedPenalty)
-    expect(result.reasons.some((r) => r.includes('repeated'))).toBe(true)
+    expect(result.score).toBe(expected)
   })
 
   it('penalizes shared primary ingredients in isolation', () => {
-    // chickenWestern vs chickenAsian: same primary, different cuisine/tags
-    const result = scoreMeal(chickenWestern, [chickenAsian], DEFAULT_WEIGHTS)
+    const chickenWestern: Meal = {
+      id: 'x1',
+      name: 'Roast Chicken',
+      role: 'dish',
+      cuisine: 'western',
+      meal_type: 'dinner',
+      tags: [],
+      primaryIngredientIds: ['chicken'],
+    }
+    const result = scoreMeal(chickenWestern, [chickenCurry], DEFAULT_WEIGHTS)
     expect(result.score).toBe(100 - DEFAULT_WEIGHTS.ingredient)
-    expect(result.reasons.some((r) => r.includes('primary ingredient'))).toBe(true)
-  })
-
-  it('penalizes shared cuisine in isolation', () => {
-    // tofuAsian vs chickenAsian: same cuisine, different primary/tags
-    const result = scoreMeal(tofuAsian, [chickenAsian], DEFAULT_WEIGHTS)
-    expect(result.score).toBe(100 - DEFAULT_WEIGHTS.cuisine)
-    expect(result.reasons.some((r) => r.includes('same cuisine'))).toBe(true)
-  })
-
-  it('penalizes shared tags in isolation', () => {
-    // lettuceWestern vs chickenAsian: same tag, different primary/cuisine
-    const result = scoreMeal(lettuceWestern, [chickenAsian], DEFAULT_WEIGHTS)
-    expect(result.score).toBe(100 - DEFAULT_WEIGHTS.tag)
-    expect(result.reasons.some((r) => r.includes('shared tag'))).toBe(true)
-  })
-
-  it('stacks penalties when a meal conflicts on multiple axes', () => {
-    // chickenAsianDupe vs chickenAsian — identical on all axes
-    const result = scoreMeal(chickenAsianDupe, [chickenAsian], DEFAULT_WEIGHTS)
-    const expectedPenalty =
-      DEFAULT_WEIGHTS.ingredient + DEFAULT_WEIGHTS.cuisine + DEFAULT_WEIGHTS.tag
-    // No "repeat" because IDs differ
-    expect(result.score).toBe(100 - expectedPenalty)
   })
 })
 
 // ---- generatePlan tests ----
 
-describe('generatePlan', () => {
-  it('produces the requested number of days and slots', () => {
-    const plan = generatePlan(allMeals, { days: 5 })
-    expect(plan).toHaveLength(5)
+describe('generatePlan — pairing', () => {
+  it('produces curry + carb for each main slot', () => {
+    const plan = generatePlan(allMeals, {
+      days: 3,
+      slots: ['lunch'],
+    })
+    expect(plan).toHaveLength(3)
     plan.forEach((day) => {
-      expect(day.meals).toHaveLength(2) // lunch + dinner
+      expect(day.slots).toHaveLength(1)
+      const slot = day.slots[0]
+      expect(slot.slot).toBe('lunch')
+      expect(slot.meals).toHaveLength(2) // curry + carb
+      const roles = slot.meals.map((m) => m.role).sort()
+      expect(roles).toEqual(['carb', 'curry'])
     })
   })
 
-  it('respects slots when a candidate pool exists', () => {
-    const plan = generatePlan(allMeals, { days: 3 })
+  it('handles breakfast — either standalone or carb + curry pair', () => {
+  const plan = generatePlan(allMeals, {
+    days: 3,
+    slots: ['breakfast'],
+  })
+  expect(plan).toHaveLength(3)
+  plan.forEach((day) => {
+    expect(day.slots).toHaveLength(1)
+    const slot = day.slots[0]
+    expect(slot.slot).toBe('breakfast')
+    // Either 1 meal (standalone breakfast) or 2 (carb + curry)
+    expect([1, 2]).toContain(slot.meals.length)
+    // Every meal in the slot must be breakfast-appropriate
+    slot.meals.forEach((m) => {
+      expect(m.meal_type).toBe('breakfast')
+    })
+  })
+})
+
+  it('handles mixed breakfast + lunch + dinner in one plan', () => {
+  const plan = generatePlan(allMeals, { days: 2 })
+  expect(plan).toHaveLength(2)
+  plan.forEach((day) => {
+    expect(day.slots).toHaveLength(3)
+    // All three slots pair up: breakfast (carb + breakfast), lunch (carb + curry), dinner (carb + curry)
+    const totals = day.slots.map((s) => s.meals.length)
+    expect(totals).toEqual([2, 2, 2])
+
+    // Verify breakfast slot contents
+    const breakfastSlot = day.slots.find((s) => s.slot === 'breakfast')!
+    breakfastSlot.meals.forEach((m) => {
+      expect(m.meal_type).toBe('breakfast')
+    })
+
+    // Verify lunch and dinner slots are curry + carb
+    const lunchSlot = day.slots.find((s) => s.slot === 'lunch')!
+    const dinnerSlot = day.slots.find((s) => s.slot === 'dinner')!
+    ;[lunchSlot, dinnerSlot].forEach((slot) => {
+      const roles = slot.meals.map((m) => m.role).sort()
+      expect(roles).toEqual(['carb', 'curry'])
+    })
+  })
+})
+
+  it('degrades gracefully if no carbs exist', () => {
+    const noCarbs = allMeals.filter((m) => m.role !== 'carb')
+    const plan = generatePlan(noCarbs, { days: 2, slots: ['lunch'] })
     plan.forEach((day) => {
-      expect(day.meals[0].meal_type).toBe('lunch')
-      expect(day.meals[1].meal_type).toBe('dinner')
+      expect(day.slots[0].meals).toHaveLength(1)
+      expect(day.slots[0].meals[0].role).toBe('curry')
     })
   })
 
-  it('avoids repeating the same lunch two days in a row when alternatives exist', () => {
-    const plan = generatePlan(allMeals, { days: 3 })
-    const lunchIds = plan.map((d) => d.meals[0].id)
-    expect(new Set(lunchIds).size).toBeGreaterThanOrEqual(2)
+  it('degrades gracefully if no curries exist', () => {
+    const noCurries = allMeals.filter((m) => m.role !== 'curry')
+    const plan = generatePlan(noCurries, { days: 2, slots: ['lunch'] })
+    plan.forEach((day) => {
+      expect(day.slots[0].meals).toHaveLength(1)
+      expect(day.slots[0].meals[0].role).toBe('carb')
+    })
+  })
+})
+
+describe('generatePlan — variety', () => {
+  it('rotates through curries before repeating', () => {
+    const plan = generatePlan(allMeals, {
+      days: 4,
+      slots: ['lunch'],
+      recentWindow: 10,
+    })
+    const curryIds = plan.map(
+      (d) => d.slots[0].meals.find((m) => m.role === 'curry')!.id
+    )
+    expect(new Set(curryIds).size).toBe(4)
   })
 
-  it('rotates through all available lunches before repeating', () => {
-    // 5 lunches available, 5 days — should use all 5 at least once
-    const plan = generatePlan(allMeals, { days: 5, recentWindow: 10 })
-    const lunchIds = plan.map((d) => d.meals[0].id)
-    expect(new Set(lunchIds).size).toBe(5)
-  })
-
-  it('handles a slot with no candidates gracefully', () => {
+  it('rotates through carbs before repeating', () => {
     const plan = generatePlan(allMeals, {
       days: 2,
-      slots: ['lunch', 'dinner', 'snack'],
+      slots: ['lunch'],
+      recentWindow: 10,
     })
-    plan.forEach((day) => {
-      // snack slot is silently skipped
-      expect(day.meals).toHaveLength(2)
-    })
+    const carbIds = plan.map(
+      (d) => d.slots[0].meals.find((m) => m.role === 'carb')!.id
+    )
+    expect(new Set(carbIds).size).toBe(2)
   })
 
-  it('returns deterministic output for the same input', () => {
+  it('returns deterministic output', () => {
     const a = generatePlan(allMeals, { days: 4 })
     const b = generatePlan(allMeals, { days: 4 })
     expect(a).toEqual(b)

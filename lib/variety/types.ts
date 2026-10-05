@@ -1,8 +1,10 @@
 export type MealType = 'breakfast' | 'lunch' | 'dinner' | 'snack'
+export type MealRole = 'curry' | 'carb' | 'breakfast' | 'dish' | 'other'
 
 export interface Meal {
   id: string
   name: string
+  role: MealRole
   cuisine: string | null
   meal_type: MealType
   tags: string[]
@@ -16,44 +18,46 @@ export interface ScoredMeal extends Meal {
 }
 
 export interface GeneratorWeights {
-  /** Penalty per repeat of an exact meal within the recent window */
   repeat: number
-  /** Penalty per primary ingredient shared with recent meals */
   ingredient: number
-  /** Penalty per meal with the same cuisine in the recent window */
   cuisine: number
-  /** Penalty per shared tag */
   tag: number
 }
 
 export interface GeneratorOptions {
-  /** Number of days to plan */
   days: number
-  /** Which meal slots to fill each day */
+  /** Which slots to fill. Breakfast slots produce 1 meal; lunch/dinner produce curry + carb. */
   slots: MealType[]
   /** How many previous meals to consider when scoring */
   recentWindow: number
-  /** Tunable scoring weights */
   weights: GeneratorWeights
+  /** Which roles to pair in a main slot. Default: ['curry', 'carb'] */
+  mainSlotRoles: MealRole[]
+}
+
+export interface GeneratedSlot {
+  slot: MealType
+  meals: ScoredMeal[]
 }
 
 export interface GeneratedDay {
   dayIndex: number
-  meals: ScoredMeal[]
+  slots: GeneratedSlot[]
 }
 
 export const DEFAULT_WEIGHTS: GeneratorWeights = {
   repeat: 50,
   ingredient: 12,
-  cuisine: 6,
+  cuisine: 2, // low — all SL meals share cuisine
   tag: 2,
 }
 
 export const DEFAULT_OPTIONS: GeneratorOptions = {
   days: 7,
-  slots: ['lunch', 'dinner'],
-  recentWindow: 4, // last 4 meals considered "recent"
+  slots: ['breakfast', 'lunch', 'dinner'],
+  recentWindow: 4,
   weights: DEFAULT_WEIGHTS,
+  mainSlotRoles: ['curry', 'carb'],
 }
 
 export const BASE_SCORE = 100

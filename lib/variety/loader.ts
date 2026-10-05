@@ -1,5 +1,5 @@
 import type { SupabaseClient } from '@supabase/supabase-js'
-import type { Meal, MealType } from './types'
+import type { Meal, MealRole, MealType } from './types'
 
 export async function loadMeals(
   supabase: SupabaseClient,
@@ -9,7 +9,7 @@ export async function loadMeals(
   let query = supabase
     .from('meals')
     .select(
-      'id, name, cuisine, meal_type, tags, meal_ingredients(ingredient_id, is_primary)'
+      'id, name, role, cuisine, meal_type, tags, meal_ingredients(ingredient_id, is_primary)'
     )
 
   if (includeCatalog) {
@@ -25,6 +25,7 @@ export async function loadMeals(
   return (data ?? []).map((row) => ({
     id: row.id,
     name: row.name,
+    role: (row.role ?? 'dish') as MealRole,
     cuisine: row.cuisine,
     meal_type: row.meal_type as MealType,
     tags: row.tags ?? [],

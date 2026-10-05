@@ -110,14 +110,16 @@ export async function POST(request: Request) {
   }
 
   // Match generated days to inserted days by index (both are in the same order)
-  const mealRows = generated.flatMap((day, index) =>
-    day.meals.map((meal, slotIndex) => ({
-      planned_day_id: insertedDays[index].id,
+  const mealRows = generated.flatMap((day, dayIndex) =>
+  day.slots.flatMap((slot) =>
+    slot.meals.map((meal, mealIndex) => ({
+      planned_day_id: insertedDays[dayIndex].id,
       meal_id: meal.id,
-      slot: meal.meal_type,
-      position: slotIndex,
+      slot: slot.slot,
+      position: mealIndex,
     }))
   )
+)
 
   const { error: mealsError } = await supabase
     .from('planned_meals')

@@ -15,7 +15,6 @@ export default async function MealsPage({
     data: { user },
   } = await supabase.auth.getUser()
 
-  // Base query: system catalog (user_id null) OR this user's meals
   let query = supabase
     .from('meals')
     .select('id, name, cuisine, meal_type, tags, user_id, meal_ingredients(count)')
@@ -33,7 +32,7 @@ export default async function MealsPage({
 
   if (error) {
     return (
-      <div className="bg-red-50 border border-red-200 text-red-700 p-4 rounded">
+      <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
         Failed to load meals: {error.message}
       </div>
     )
@@ -47,39 +46,39 @@ export default async function MealsPage({
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold">Meals</h1>
-          <p className="text-sm text-gray-600 mt-1">
+          <h1 className="text-2xl font-bold tracking-tight text-stone-900">Meals</h1>
+          <p className="mt-1 text-sm text-stone-600">
             {meals?.length ?? 0} meal{meals?.length === 1 ? '' : 's'} available
           </p>
         </div>
-        <Link
-          href="/meals/new"
-          className="bg-black text-white px-4 py-2 rounded text-sm"
-        >
+        <Link href="/meals/new" className="btn-primary">
           + New meal
         </Link>
       </div>
 
-      <div className="flex gap-2 border-b">
-        {tabs.map((t) => (
-          <Link
-            key={t.key}
-            href={`/meals?filter=${t.key}`}
-            className={`px-3 py-2 text-sm -mb-px border-b-2 ${
-              filter === t.key
-                ? 'border-black font-medium'
-                : 'border-transparent text-gray-600 hover:text-black'
-            }`}
-          >
-            {t.label}
-          </Link>
-        ))}
+      <div className="flex gap-1 rounded-lg border border-stone-200 bg-white p-1">
+        {tabs.map((t) => {
+          const active = filter === t.key
+          return (
+            <Link
+              key={t.key}
+              href={`/meals?filter=${t.key}`}
+              className={`flex-1 rounded-md px-3 py-1.5 text-center text-sm font-medium transition-colors ${
+                active
+                  ? 'bg-brand-600 text-white'
+                  : 'text-stone-600 hover:bg-stone-100'
+              }`}
+            >
+              {t.label}
+            </Link>
+          )
+        })}
       </div>
 
       {meals && meals.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
           {meals.map((m) => (
             <MealCard
               key={m.id}
@@ -96,9 +95,12 @@ export default async function MealsPage({
           ))}
         </div>
       ) : (
-        <div className="text-center py-16 text-gray-500">
-          <p>No meals in this view.</p>
-          <Link href="/meals/new" className="underline mt-2 inline-block">
+        <div className="card px-6 py-16 text-center">
+          <p className="text-stone-600">No meals in this view.</p>
+          <Link
+            href="/meals/new"
+            className="btn-primary mt-4 inline-flex"
+          >
             Add your first meal
           </Link>
         </div>

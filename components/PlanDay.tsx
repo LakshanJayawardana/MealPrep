@@ -32,27 +32,27 @@ export function PlanDay({ day }: { day: PlannedDay }) {
   const meals = [...day.planned_meals].sort((a, b) => a.position - b.position)
 
   return (
-    <div className="bg-white rounded-lg border p-4 space-y-3">
+    <div className="card p-4">
       <div className="flex items-baseline justify-between">
-        <h3 className="font-semibold">{dayName}</h3>
-        <span className="text-xs text-gray-500">{dateLabel}</span>
+        <h3 className="font-semibold text-stone-900">{dayName}</h3>
+        <span className="text-xs text-stone-500">{dateLabel}</span>
       </div>
 
-      <div className="space-y-2">
+      <div className="mt-3 space-y-2">
         {meals.map((pm) => (
           <div
             key={pm.id}
-            className="flex items-start gap-3 border-l-2 border-gray-200 pl-3 py-1"
+            className="flex items-start gap-3 border-l-2 border-brand-200 pl-3 py-1"
           >
-            <span className="text-xs uppercase text-gray-400 w-16 pt-0.5">
+            <span className="w-16 shrink-0 pt-0.5 text-xs font-medium uppercase text-stone-400">
               {pm.slot}
             </span>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium leading-tight">
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-medium leading-tight text-stone-900">
                 {pm.meals.name}
               </p>
               {pm.meals.cuisine && (
-                <p className="text-xs text-gray-500 mt-0.5">
+                <p className="mt-0.5 text-xs text-stone-500">
                   {pm.meals.cuisine}
                 </p>
               )}

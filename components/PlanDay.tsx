@@ -1,3 +1,8 @@
+'use client'
+
+import { useState } from 'react'
+import { SwapMealDialog } from './SwapMealDialog'
+
 type PlannedMeal = {
   id: string
   slot: string
@@ -18,6 +23,11 @@ type PlannedDay = {
   planned_meals: PlannedMeal[]
 }
 
+type SwapTarget = {
+  mealRowId: string
+  currentName: string
+}
+
 const SLOT_ORDER = ['breakfast', 'lunch', 'dinner', 'snack']
 
 const SLOT_LABELS: Record<string, string> = {
@@ -27,7 +37,15 @@ const SLOT_LABELS: Record<string, string> = {
   snack: 'Snack',
 }
 
-export function PlanDay({ day }: { day: PlannedDay }) {
+export function PlanDay({
+  day,
+  planId,
+}: {
+  day: PlannedDay
+  planId: string
+}) {
+  const [swapTarget, setSwapTarget] = useState<SwapTarget | null>(null)
+
   const date = new Date(day.day_date + 'T00:00:00Z')
   const dayName = date.toLocaleDateString('en-US', {
     weekday: 'long',
@@ -39,14 +57,12 @@ export function PlanDay({ day }: { day: PlannedDay }) {
     timeZone: 'UTC',
   })
 
-  // Group meals by slot
   const bySlot = new Map<string, PlannedMeal[]>()
   for (const pm of day.planned_meals) {
     if (!bySlot.has(pm.slot)) bySlot.set(pm.slot, [])
     bySlot.get(pm.slot)!.push(pm)
   }
 
-  // Sort slots and meals within each slot
   const sortedSlots = Array.from(bySlot.entries()).sort((a, b) => {
     const ai = SLOT_ORDER.indexOf(a[0])
     const bi = SLOT_ORDER.indexOf(b[0])
@@ -57,31 +73,53 @@ export function PlanDay({ day }: { day: PlannedDay }) {
   })
 
   return (
-    <div className="card p-4">
-      <div className="flex items-baseline justify-between">
-        <h3 className="font-semibold text-stone-900">{dayName}</h3>
-        <span className="text-xs text-stone-500">{dateLabel}</span>
+    <>
+      <div className="card p-4">
+        <div className="flex items-baseline justify-between">
+          <h3 className="font-semibold text-stone-900">{dayName}</h3>
+          <span className="text-xs text-stone-500">{dateLabel}</span>
+        </div>
+
+        <div className="mt-3 space-y-3">
+          {sortedSlots.map(([slot, meals]) => (
+            <SlotBlock
+              key={slot}
+              slot={slot}
+              meals={meals}
+              onSwap={(rowId, name) =>
+                setSwapTarget({ mealRowId: rowId, currentName: name })
+              }
+            />
+          ))}
+
+          {sortedSlots.length === 0 && (
+            <p className="text-sm text-stone-500">No meals planned.</p>
+          )}
+        </div>
       </div>
 
-      <div className="mt-3 space-y-3">
-        {sortedSlots.map(([slot, meals]) => (
-          <SlotBlock key={slot} slot={slot} meals={meals} />
-        ))}
-
-        {sortedSlots.length === 0 && (
-          <p className="text-sm text-stone-500">No meals planned.</p>
-        )}
-      </div>
-    </div>
+      {swapTarget && (
+        <SwapMealDialog
+          planId={planId}
+          mealRowId={swapTarget.mealRowId}
+          currentName={swapTarget.currentName}
+          onClose={() => setSwapTarget(null)}
+        />
+      )}
+    </>
   )
 }
 
-function SlotBlock({ slot, meals }: { slot: string; meals: PlannedMeal[] }) {
-  // Sort meals by position
+function SlotBlock({
+  slot,
+  meals,
+  onSwap,
+}: {
+  slot: string
+  meals: PlannedMeal[]
+  onSwap: (rowId: string, name: string) => void
+}) {
   const sorted = [...meals].sort((a, b) => a.position - b.position)
-
-  // A "pair" is a curry + carb. A "single" is anything alone.
-  const isPair = sorted.length >= 2
 
   return (
     <div className="rounded-lg bg-stone-50 p-3">
@@ -89,12 +127,10 @@ function SlotBlock({ slot, meals }: { slot: string; meals: PlannedMeal[] }) {
         {SLOT_LABELS[slot] ?? slot}
       </p>
 
-      {isPair ? (
-        // Pair rendering — main dish prominent, sides smaller
-        <div className="mt-1.5 space-y-0.5">
-          {sorted.map((pm, index) => (
+      <ul className="mt-1.5 space-y-0.5">
+        {sorted.map((pm, index) => (
+          <li key={pm.id} className="group flex items-center justify-between gap-2">
             <p
-              key={pm.id}
               className={
                 index === 0
                   ? 'text-sm font-medium leading-tight text-stone-900'
@@ -103,13 +139,17 @@ function SlotBlock({ slot, meals }: { slot: string; meals: PlannedMeal[] }) {
             >
               {pm.meals.name}
             </p>
-          ))}
-        </div>
-      ) : (
-        <p className="mt-1 text-sm font-medium leading-tight text-stone-900">
-          {sorted[0]?.meals.name ?? '—'}
-        </p>
-      )}
+            <button
+              onClick={() => onSwap(pm.id, pm.meals.name)}
+              className="shrink-0 rounded p-1 text-stone-400 transition-colors hover:bg-white hover:text-stone-900"
+              aria-label="Swap this meal"
+              title="Swap"
+            >
+              ↻
+            </button>
+          </li>
+        ))}
+      </ul>
     </div>
   )
 }

@@ -79,7 +79,7 @@ export default async function PlanDetailPage({
             })),
           }
 
-          return <PlanDay key={day.id} day={normalizedDay} />
+          return <PlanDay key={day.id} day={normalizedDay} planId={id} />
         })}
       </div>
     </div>
